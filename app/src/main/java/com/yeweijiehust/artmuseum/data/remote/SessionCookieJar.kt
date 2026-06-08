@@ -34,7 +34,7 @@ class SessionCookieJar @Inject constructor(private val preferences: AppPreferenc
         preferences.saveCookie(null)
     }
 
-    private fun parseCookie(raw: String): Cookie? = Cookie.parse(AppPreferences.DEFAULT_ENDPOINT.toHttpUrl(), raw)
+    private fun parseCookie(raw: String): Cookie? = Cookie.parse(preferences.loadEndpoint().toHttpUrl(), raw)
 
     companion object {
         private const val COOKIE_NAME = "am_session"

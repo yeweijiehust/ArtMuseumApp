@@ -20,5 +20,6 @@ local.properties
 google-services.json
 /design
 .codex/
+/.kotlin/
 /api_doc.json
 /api_docs.json

@@ -16,7 +16,7 @@ import javax.inject.Singleton
 private val Context.dataStore by preferencesDataStore("artmuseum_preferences")
 
 @Singleton
-class AppPreferences @Inject constructor(@ApplicationContext private val context: Context) {
+class AppPreferences @Inject constructor(@param:ApplicationContext private val context: Context) {
     private val endpointKey = stringPreferencesKey("endpoint")
     private val languageKey = stringPreferencesKey("language")
     private val cookieKey = stringPreferencesKey("cookie")
@@ -38,6 +38,8 @@ class AppPreferences @Inject constructor(@ApplicationContext private val context
     }
 
     fun loadCookie(): String? = runBlocking { context.dataStore.data.first()[cookieKey] }
+
+    fun loadEndpoint(): String = runBlocking { context.dataStore.data.first()[endpointKey] ?: DEFAULT_ENDPOINT }
 
     fun saveCookie(cookie: String?) = runBlocking {
         context.dataStore.edit {
