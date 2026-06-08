@@ -27,10 +27,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
@@ -44,17 +44,16 @@ jobs:
           sdkmanager --install "platforms;android-36.1" "build-tools;36.1.0" "platform-tools"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Make Gradle wrapper executable
-        run: chmod +x gradlew
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: wrapper
 
       - name: Run build checks
-        run: ./gradlew testDebugUnitTest verifyRoborazziDebug lintDebug assembleDebug --no-daemon --stacktrace
+        run: gradle testDebugUnitTest verifyRoborazziDebug lintDebug assembleDebug --no-daemon --stacktrace
 
       - name: Upload lint report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lint-debug-report
           path: app/build/reports/lint-results-debug.html
@@ -62,7 +61,7 @@ jobs:
 
       - name: Upload debug APK
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: artmuseum-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
@@ -75,10 +74,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
@@ -92,11 +91,15 @@ jobs:
           sdkmanager --install "platforms;android-36.1" "build-tools;36.1.0" "platform-tools"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: wrapper
 
       - name: Run live contract tests
         shell: pwsh
         run: .\scripts\run-live-contract-tests.ps1
+        env:
+          ARTMUSEUM_GRADLE_COMMAND: gradle
 
   connected-tests:
     name: Connected Android tests
@@ -107,10 +110,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
@@ -124,10 +127,9 @@ jobs:
           sdkmanager --install "platforms;android-36.1" "build-tools;36.1.0" "platform-tools"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Make Gradle wrapper executable
-        run: chmod +x gradlew
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: wrapper
 
       - name: Enable KVM access
         run: |
@@ -142,4 +144,4 @@ jobs:
           target: google_apis
           arch: x86_64
           disable-animations: true
-          script: ./gradlew connectedDebugAndroidTest --no-daemon --stacktrace
+          script: gradle connectedDebugAndroidTest --no-daemon --stacktrace

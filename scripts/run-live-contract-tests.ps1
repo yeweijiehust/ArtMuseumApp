@@ -29,7 +29,12 @@ Get-Fixture "/api/auth/me" "unauthorized.json" 401
 
 $env:ARTMUSEUM_CONTRACT_FIXTURE_DIR = (Resolve-Path $fixtureDir).Path
 try {
-    & (Join-Path $PSScriptRoot "..\gradlew.bat") testDebugUnitTest --tests "*LiveContractDeserializationTest"
+    $gradleCommand = if ($env:ARTMUSEUM_GRADLE_COMMAND) {
+        $env:ARTMUSEUM_GRADLE_COMMAND
+    } else {
+        Join-Path $PSScriptRoot "..\gradlew.bat"
+    }
+    & $gradleCommand testDebugUnitTest --tests "*LiveContractDeserializationTest"
     if ($LASTEXITCODE -ne 0) {
         throw "Live contract tests failed"
     }
