@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.roborazzi)
 }
 android {
-    namespace = "com.example.artmuseumapp"
+    namespace = "com.yeweijiehust.artmuseum"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -15,7 +15,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.artmuseumapp"
+        applicationId = "com.yeweijiehust.artmuseum"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -119,6 +119,10 @@ dependencies {
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.media3.common)
+
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+    testImplementation(libs.coil.test)
 
     testImplementation(libs.androidx.junit)
     testImplementation(libs.androidx.compose.ui.test.junit4)

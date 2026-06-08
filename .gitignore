@@ -20,3 +20,5 @@ local.properties
 google-services.json
 /design
 .codex/
+/api_doc.json
+/api_docs.json
