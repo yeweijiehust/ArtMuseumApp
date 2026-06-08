@@ -22,7 +22,7 @@ env:
 jobs:
   build:
     name: Unit, lint, screenshot, and assemble
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     timeout-minutes: 45
 
     steps:
@@ -39,7 +39,7 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Install Android SDK packages
-        shell: bash
+        shell: pwsh
         run: |
           sdkmanager --install "platforms;android-36.1" "build-tools;36.1.0" "platform-tools"
 
