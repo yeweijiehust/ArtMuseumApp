@@ -30,10 +30,24 @@ fun ErrorState(error: UiError, onRetry: (() -> Unit)? = null, modifier: Modifier
     val strings = LocalAppStrings.current
     val message = when (error) {
         UiError.Offline -> strings.offline
+        UiError.Timeout -> strings.timeout
+        UiError.Unreachable -> strings.unreachable
+        UiError.ServerUnavailable -> strings.serverUnavailable
+        UiError.InvalidResponse -> strings.invalidResponse
+        UiError.RateLimited -> strings.rateLimited
+        UiError.InvalidCredentials -> strings.invalidCredentials
+        UiError.EmailExists -> strings.emailExists
         UiError.Unauthorized -> strings.unauthorized
         UiError.Forbidden -> strings.forbidden
         UiError.NotFound -> strings.notFound
-        UiError.Generic -> strings.retry
+        UiError.InvalidRequest -> strings.invalidRequest
+        UiError.FileRequired -> strings.fileRequired
+        UiError.TitleRequired -> strings.titleRequired
+        UiError.InvalidFileType -> strings.invalidFileType
+        UiError.FileTooLarge -> strings.fileTooLarge
+        UiError.StorageFailure -> strings.storageFailure
+        UiError.InvalidEndpoint -> strings.invalidEndpoint
+        UiError.Generic -> strings.genericError
     }
     Column(
         modifier = modifier.fillMaxWidth().padding(24.dp),

@@ -24,17 +24,48 @@ import javax.inject.Inject
 
 enum class UiError {
     Offline,
+    Timeout,
+    Unreachable,
+    ServerUnavailable,
+    InvalidResponse,
+    RateLimited,
+    InvalidCredentials,
+    EmailExists,
     Unauthorized,
     Forbidden,
     NotFound,
+    InvalidRequest,
+    FileRequired,
+    TitleRequired,
+    InvalidFileType,
+    FileTooLarge,
+    StorageFailure,
+    InvalidEndpoint,
     Generic
 }
 
 fun Throwable.toUiError() = when (this) {
     AppFailure.Offline -> UiError.Offline
+    AppFailure.Timeout -> UiError.Timeout
+    AppFailure.Unreachable -> UiError.Unreachable
+    AppFailure.ServerUnavailable -> UiError.ServerUnavailable
+    AppFailure.InvalidResponse -> UiError.InvalidResponse
+    AppFailure.RateLimited -> UiError.RateLimited
     AppFailure.Unauthorized -> UiError.Unauthorized
     AppFailure.Forbidden -> UiError.Forbidden
     AppFailure.NotFound -> UiError.NotFound
+    is AppFailure.InvalidEndpoint -> UiError.InvalidEndpoint
+    is AppFailure.Api -> when (code) {
+        "INVALID_CREDENTIALS" -> UiError.InvalidCredentials
+        "EMAIL_EXISTS" -> UiError.EmailExists
+        "VALIDATION_ERROR", "BAD_REQUEST" -> UiError.InvalidRequest
+        "FILE_REQUIRED" -> UiError.FileRequired
+        "TITLE_REQUIRED" -> UiError.TitleRequired
+        "INVALID_FILE_TYPE" -> UiError.InvalidFileType
+        "FILE_TOO_LARGE" -> UiError.FileTooLarge
+        "STORAGE_FAILURE" -> UiError.StorageFailure
+        else -> UiError.Generic
+    }
     else -> UiError.Generic
 }
 

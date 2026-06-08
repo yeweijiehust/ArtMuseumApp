@@ -182,7 +182,7 @@ class GalleryRepositoryImpl @Inject constructor(
             val cached = dao.getForMerge(id)
             dao.upsert(image.toEntity(cached?.publicPosition, cached?.minePosition))
             image
-        } catch (failure: AppFailure.Offline) {
+        } catch (failure: AppFailure.Network) {
             dao.get(id)?.toDomain() ?: throw failure
         }
     }

@@ -50,7 +50,14 @@ data class ImageUpdate(
 )
 
 sealed class AppFailure(message: String) : Exception(message) {
-    data object Offline : AppFailure("OFFLINE")
+    sealed class Network(message: String) : AppFailure(message)
+
+    data object Offline : Network("OFFLINE")
+    data object Timeout : Network("TIMEOUT")
+    data object Unreachable : Network("UNREACHABLE")
+    data object ServerUnavailable : AppFailure("SERVER_UNAVAILABLE")
+    data object InvalidResponse : AppFailure("INVALID_RESPONSE")
+    data object RateLimited : AppFailure("RATE_LIMITED")
     data object Unauthorized : AppFailure("UNAUTHORIZED")
     data object Forbidden : AppFailure("FORBIDDEN")
     data object NotFound : AppFailure("NOT_FOUND")

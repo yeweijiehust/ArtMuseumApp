@@ -69,6 +69,30 @@ class ViewModelsTest {
         assertThat(viewModel.state.value.success).isTrue()
         assertThat(repository.currentUser.value?.email).isEqualTo("user@example.com")
     }
+
+    @Test
+    fun authPublishesSpecificErrorAfterInvalidCredentials() = runTest {
+        val repository = FakeAuthRepository(AppFailure.Api("INVALID_CREDENTIALS", "Invalid email or password"))
+        val viewModel = AuthViewModel(repository)
+
+        viewModel.login("user@example.com", "wrong-password")
+        advanceUntilIdle()
+
+        assertThat(viewModel.state.value.error).isEqualTo(UiError.InvalidCredentials)
+        assertThat(viewModel.state.value.submitting).isFalse()
+        assertThat(viewModel.state.value.success).isFalse()
+    }
+
+    @Test
+    fun failuresMapToActionableUiErrors() {
+        assertThat(AppFailure.Timeout.toUiError()).isEqualTo(UiError.Timeout)
+        assertThat(AppFailure.Unreachable.toUiError()).isEqualTo(UiError.Unreachable)
+        assertThat(AppFailure.ServerUnavailable.toUiError()).isEqualTo(UiError.ServerUnavailable)
+        assertThat(AppFailure.InvalidResponse.toUiError()).isEqualTo(UiError.InvalidResponse)
+        assertThat(AppFailure.Api("EMAIL_EXISTS", "Already exists").toUiError()).isEqualTo(UiError.EmailExists)
+        assertThat(AppFailure.Api("FILE_TOO_LARGE", "Too large").toUiError()).isEqualTo(UiError.FileTooLarge)
+        assertThat(AppFailure.InvalidEndpoint("Invalid URL").toUiError()).isEqualTo(UiError.InvalidEndpoint)
+    }
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -114,10 +138,11 @@ private class FakeGalleryRepository(
     override suspend fun clear() = Unit
 }
 
-private class FakeAuthRepository : AuthRepository {
+private class FakeAuthRepository(private val loginFailure: Throwable? = null) : AuthRepository {
     override val currentUser = MutableStateFlow<User?>(null)
     override suspend fun restoreSession() = Unit
     override suspend fun login(email: String, password: String) {
+        loginFailure?.let { throw it }
         currentUser.value = User("1", email, "User", "now")
     }
 
